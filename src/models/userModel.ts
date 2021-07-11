@@ -1,34 +1,52 @@
 
+import mongoose, { Schema, Document } from 'mongoose'
+
 type Sex = '男' | '女'
 
-interface User {
-  name: String
+export interface UserDoc extends Document {
+  firstName: String
+  lastName: String
   email: String
-  sex: Sex
   age: Number
+  sex: Sex
 }
 
-const users: Array<User> = [
+const userSchema: Schema = new Schema(
   {
-    name: 'ユーザー1',
-    email: 'user1@example.com',
-    sex: '男',
-    age: 19,
+    firstName: {
+      type: String,
+      trim: true,
+      required: true,
+    },
+    lastName: {
+      type: String,
+      trim: true,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    age: {
+      type: Number,
+      required: true,
+    },
+    sex: {
+      type: String,
+      required: true,
+      enum: ['男', '女']
+    },
   },
   {
-    name: 'ユーザー2',
-    email: 'user2@example.com',
-    sex: '男',
-    age: 22,
-  },
-  {
-    name: 'ユーザー3',
-    email: 'user3@example.com',
-    sex: '女',
-    age: 33,
-  },
-]
+    timestamps: true,
+  }
+)
 
-export function find(): Array<User> {
-  return users
-}
+userSchema.virtual('name').get(function (this: UserDoc) {
+  return `${this.firstName} ${this.lastName}`
+})
+
+export default mongoose.model<UserDoc>('User', userSchema)
+// const User = mongoose.model("User", userSchema)
+// module.exports = User;
