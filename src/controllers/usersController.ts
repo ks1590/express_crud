@@ -1,7 +1,9 @@
 import Express from 'express'
+import * as User from '../models/userModel'
 
 export default {
   index: (req: Express.Request, res: Express.Response) => {
-    res.send('<h1>User index</h1>')
-  },
+    const users = User.find()
+    res.render('users/index', { users })
+  }
 }
